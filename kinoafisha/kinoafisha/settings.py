@@ -198,6 +198,8 @@ LOGGING = {
 }
 
 # Prod settingsif not DEBUG:
+
+if not DEBUG:
     # HTTPS
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
