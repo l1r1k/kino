@@ -1,0 +1,31 @@
+{% load static %}
+<footer id="ourContactsSection">
+    <hr class="footer_hr">
+    <div class="container mb-3">
+        <div class="justify-self-center">
+            <a href="https://vk.com/ocnk89" target="_blank"><img src="{% static 'img/VKLogo.svg'%}" class="social-logo"></a>
+            <a href="https://t.me/ocnk89" target="_blank"><img src="{% static 'img/TGLogo.svg'%}" class="social-logo"></a>
+            <a href="https://premierzal.ru/" target="_blank"><img src="{% static 'img/premierlogo.png' %}" class="social-logo"></a>
+            <a href="https://xn--80aaa1bfcf4aric0iwb.xn--p1ai/" target="_blank"><img src="{% static 'img/depculturecoloredlogo.png' %}" class="social-logo"></a>
+        </div>
+
+        <div class="justify-self-center">
+            <p>Всегда рады помочь вам</p>
+        </div>
+
+        <div class="row">
+            <p>Государственное автономное учреждение культуры Ямало-Ненецкого автономного округа «Окружной Центр национальных культур»</p>
+            <p>Адрес: 629008, Ямало-Ненецкий автономный округ, г. Салехард, ул. Республики, д. 74</p>
+            <p>График работы: Пн-Вс с 8:30 до 23:00</p>
+            <p>Телефон кассы: <a class="a-pink" href="tel:+7 (34922) 4-58-98">+7 (34922) 4-58-98</a></p>
+            <p>График работы кассы: Пн, Вт – выходные дни, Ср – с 12:00 до 20:00, Чт–Вс – с 12:00 до 19:00</p>
+            <p>Электронная почта: <a class="a-pink" href="mailto:ocnk@yanao.ru">ocnk@yanao.ru</a></p>
+            <p>Сайт: <a class="a-pink" href="https://ocnk.yanao.ru">ocnk.yanao.ru</a></p>
+        </div>
+
+        <div>
+            <a class="a-pink" href={% url "ticket_refund"%}>Возврат билета</a>
+            <a class="a-pink" href={% url "info"%}>Посетителям</a>
+        </div>
+    </div>
+</footer>

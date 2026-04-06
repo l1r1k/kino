@@ -1,0 +1,40 @@
+{% load static %}
+<header>
+    <div class="container">
+        <div class="d-flex align-items-center py-2 justify-content-space-around">
+            <button class="" id="burgerBtn" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <a href="{% url 'index' %}">
+                <img src="{% static 'img/logo_ocnk_2025.png' %}" alt="Логотип" class="a-logo">
+            </a>
+
+            <div class="desktop-menu">
+                <a href="{% url 'index' %}" class="a-text ms-3 mb-0">Главная</a>
+                <a href="#kinoafishaSection" class="a-text ms-3 mb-0">Киноафиша</a>
+                <a href="#howComeToUsSection" class="a-text ms-3 mb-0">Как добраться до нас</a>
+                <a href="{% url 'info' %}" class="a-text ms-3 mb-0">Посетителям</a>
+                <a href="{% url 'ticket_refund' %}" class="a-text ms-3 mb-0">Возврат билета</a>
+            </div>
+
+            <button class="glasses-btn ms-3 mb-0" id="toggleFontBtn">
+                <div class="icon" id="glassesBtn"></div>
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="mobile-menu-wrapper">
+  <div class="mobile-menu">
+    <button class="close-btn" aria-label="Закрыть">&times;</button>
+    <a href="{% url 'index' %}" class="a-text-black ms-3 mb-3">Главная</a>
+    <a href="#kinoafishaSection" class="a-text-black ms-3 mb-3">Киноафиша</a>
+    <a href="#howComeToUsSection" class="a-text-black ms-3 mb-3">Как добраться до нас</a>
+    <a href="{% url 'info' %}" class="a-text-black ms-3 mb-3">Посетителям</a>
+    <a href="{% url 'ticket_refund' %}" class="a-text-black ms-3 mb-3">Возврат билета</a>
+  </div>
+  <div class="mobile-menu-overlay"></div>
+</div>

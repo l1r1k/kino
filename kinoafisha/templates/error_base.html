@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title_name %}
+Произошла ошибка
+{% endblock %}
+
+{% block main_class_name %}
+container
+{% endblock %}
+
+{% block content %}
+    <section class="section-card" id="error">
+        <h1>
+            Ошибка {% block code %}{% endblock %}
+        </h1>
+        <h2>{% block heading %} {% endblock %}</h2>
+        <p>Попробуйте снова позже.</p>
+        <a href="/" class="btn px-4 py-2 action-btn mb-2">На главную</a>
+    </section>
+{% endblock %}

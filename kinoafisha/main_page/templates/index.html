@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title_name%}
+Главная
+{% endblock %}
+
+{% block main_class_name %}container{% endblock %}
+
+{% block content %}
+    {% if upcoming_movies or current_movies or ending_movies %}
+        <section class="full-width mb-3" id="promoBlock">
+            <div class="carousel-wrapper">
+                <div class="slides">
+                    {% for movie in upcoming_movies%}
+                        <div class="slide" data-index="0">
+                            <div class="poster" style="background-image: url('{{ movie.background_afisha.url }}');"></div>
+                            <video class="trailer" playsinline muted data-src="/media/hls/{{ movie.id }}/index.m3u8"></video>
+
+                            <div class="text-overlay">
+                                {% if movie.name_movie_logo.url != 'Отсутствует' %}
+                                    <h1><img class="logo" src="{{ movie.name_movie_logo.url }}"></h1>
+                                {% else %}
+                                    <h1>{{ movie.name }} {{movie.get_age_constraint_display}}</h1>
+                                {% endif %}
+                                <h1>Скоро в прокате</h1>
+                                <p>{{ movie.short_description }}</p>
+                            </div>
+
+                            <div class="redirect-card">
+                                {% if movie.name_movie_logo.url != 'Отсутствует' %}
+                                    <h1><img class="logo" src="{{ movie.name_movie_logo.url }}"></h1>
+                                {% else %}
+                                    <h1>{{ movie.name }} {{movie.get_age_constraint_display}}</h1>
+                                {% endif %}
+                                <h1>Скоро в прокате</h1>
+                                <a href="{% url 'movie_detail' movie.id %}" class="btn px-4 py-2 action-btn mb-2">Подробнее</a>
+                            </div>
+
+                            <div class="controls">
+                                <button class="mute-btn">🔇</button>
+                                <button class="fullscreen-btn">⛶</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    {% for movie in current_movies %}
+                        <div class="slide" data-index="0">
+                            <div class="poster" style="background-image: url('{{ movie.background_afisha.url }}');"></div>
+                            <video class="trailer" playsinline muted data-src="/media/hls/{{ movie.id }}/index.m3u8"></video>
+
+                            <div class="text-overlay">
+                                {% if movie.name_movie_logo.name != 'Отсутствует' %}
+                                    <h1><img class="logo" src="{{ movie.name_movie_logo.url }}"></h1>
+                                {% else %}
+                                    <h1>{{ movie.name }} {{movie.get_age_constraint_display}}</h1>
+                                {% endif %}
+                                <h1>Сейчас в прокате</h1>
+                                <p>{{ movie.short_description }}</p>
+                            </div>
+
+                            <div class="redirect-card">
+                                {% if movie.name_movie_logo.name != 'Отсутствует' %}
+                                    <h1><img class="logo" src="{{ movie.name_movie_logo.url }}"></h1>
+                                {% else %}
+                                    <h1>{{ movie.name }} {{movie.get_age_constraint_display}}</h1>
+                                {% endif %}
+                                <h1>Сейчас в прокате</h1>
+                                <a href="{% url 'movie_detail' movie.id %}" class="btn px-4 py-2 action-btn mb-2">Подробнее</a>
+                            </div>
+
+                            <div class="controls">
+                                <button class="mute-btn">🔇</button>
+                                <button class="fullscreen-btn">⛶</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    {% for movie in ending_movies %}
+                        <div class="slide" data-index="0">
+                            <div class="poster" style="background-image: url('{{ movie.background_afisha.url }}');"></div>
+                            <video class="trailer" playsinline muted data-src="/media/hls/{{ movie.id }}/index.m3u8"></video>
+
+                            <div class="text-overlay">
+                                {% if movie.name_movie_logo.name != 'Отсутствует' %}
+                                    <h1><img class="logo" src="{{ movie.name_movie_logo.url }}"></h1>
+                                {% else %}
+                                    <h1>{{ movie.name }} {{movie.get_age_constraint_display}}</h1>
+                                {% endif %}
+                                <h1>Последнии дни проката</h1>
+                                <p>{{ movie.short_description }}</p>
+                            </div>
+
+                            <div class="redirect-card">
+                                {% if movie.name_movie_logo.name != 'Отсутствует' %}
+                                    <h1><img class="logo" src="{{ movie.name_movie_logo.url }}"></h1>
+                                {% else %}
+                                    <h1>{{ movie.name }} {{movie.get_age_constraint_display}}</h1>
+                                {% endif %}
+                                <h1>Последнии дни проката</h1>
+                                <a href="{% url 'movie_detail' movie.id %}" class="btn px-4 py-2 action-btn mb-2">Подробнее</a>
+                            </div>
+
+                            <div class="controls">
+                                <button class="mute-btn">🔇</button>
+                                <button class="fullscreen-btn">⛶</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <button class="prev"></button>
+                <button class="next"></button>
+
+
+                <div class="indicators"></div>
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="section-card mb-3" id="kinoafishaSection">
+        {% include "_inc/kinoafisha_content.html" %}
+    </section>
+
+    <section class="section-card mb-3" id="howComeToUsSection">
+        <h1>Как добраться до нас</h1>
+
+        <div class="row how-come-to-us">
+            <p>
+                До здания Окружного Центра национальных культур можно доехать:</br>
+                    - на автобусах № 2, 5</br>
+                    - на маршрутных такси № 2,5</br>
+                Остановка "ОЦНК"
+            </p>
+            <p>
+                Адрес: г. Салехард, ул. Республики, д. 74
+            </p>
+        </div>
+        <div class="row hot-come-to-us map-container">
+            <div class="map-overlay"></div>
+            <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A4f473446019094de478ba0bcb06c7ea3f79bd168deeea7743401a674c3aab50f&amp;source=constructor" width="100%" height="400px" frameborder="0" id="yandexMap"></iframe>
+        </div>
+    </section>
+{% endblock %}
+
+{% block include_scripts %}
+    {% if upcoming_movies or current_movies or ending_movies %}
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+        <script src="{% static 'js/index.js' %}"></script>
+    {% endif %}
+    <script src="{% static 'js/header_handler.js' %}"></script>
+    <script src="{% static 'js/filter_handler.js' %}"></script>
+    <script src="{% static 'js/buttons_handler.js'%}"></script>
+{% endblock %}

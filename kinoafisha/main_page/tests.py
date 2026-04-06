@@ -1,0 +1,5 @@
+from django.test import TestCase
+from .premier_helper import add_movies_from_premier_zal_to_local_db, add_sessions_from_premier_zal_to_local_db, delete_sessions_if_them_left
+
+# Create your tests here.
+add_sessions_from_premier_zal_to_local_db()

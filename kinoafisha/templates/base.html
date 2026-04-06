@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title_name %}
+
+    {% endblock %}</title>
+    <link rel="icon" href="{% static 'img/logo_ocnk.png'%}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    <link rel="stylesheet" href="{% static 'css/promo_style.css'%}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+    <link rel="stylesheet" href="https://widget-new.premierzal.ru/widget.css" type="text/css" />
+    {% block scripts %}
+
+    {% endblock %}
+</head>
+<body>
+    {% block header %}
+        {% include '_includes/header_user.html' %}
+    {% endblock %}
+
+    <main class="{% block main_class_name%} {% endblock %}">
+        {% block content%}
+
+        {% endblock %}
+    </main>
+
+    {% block footer %}
+        {% include '_includes/footer.html'%}
+    {% endblock  %}
+    
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'js/premier.js'%}"></script>
+    <script src="https://widget-new.premierzal.ru/widget.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+    <script>
+        const btn = document.getElementById('toggleFontBtn');
+
+        btn.addEventListener('click', () => {
+        document.documentElement.classList.toggle('large-font');
+        });
+    </script>
+    {% block include_scripts %}
+
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title_name%}
+Информация о фильме "{{ movie.name }}"
+{% endblock %}
+
+{% block main_class_name %}
+container
+{% endblock %}
+
+{% block content %}
+<section class="full-width mb-3 align-content-center" id="movieInfo">
+    <div class="trailer-background position-absolute w-100 h-100" style="top:0; left:0; z-index:0;">
+        <video id="trailer-video" data-src="/media/hls/{{ movie.id }}/index.m3u8" muted playsinline></video>
+        <div class="trailer-overlay"></div>
+    </div>
+
+    <div class="row justify-content-center align-items-center position-relative mb-3 ms-auto me-auto">
+
+        <div class="col-12 col-md-5 mb-4 mb-md-0">
+            <div class="position-relative text-center" style="border-radius: 12px; overflow: hidden;">
+                {% if movie.is_allow_pushkin_card %}
+                    <img src="{% static 'img/pushkin.png' %}" alt="Можно по Пушкинской карте"
+                        class="pushkin-badge">
+                {% endif %}
+
+                <img src="{{ movie.afisha.url }}" alt="{{ movie.name }}" 
+                     class="img-fluid shadow-img">
+            </div>
+        </div>
+
+        <div class="col-12 col-md-7">
+            <div class="card info-card p-4">
+                <h2 class="mb-3 d-flex align-items-center">
+                    {{ movie.name }}
+                    <span class="age-circle age-{{ movie.age_constraint }}">
+                        {{ movie.get_age_constraint_display }}
+                    </span>
+                </h2>
+                {% if movie.published_year > 1%}
+                    <p class="text mb-2 non-active-p"><strong>Год выхода:</strong> {{ movie.published_year }}</p>
+                {% endif %}
+
+                {% if movie.genres.exists %}
+                <p class="text mb-2"><strong>Жанры:</strong>
+                    {{ movie.genres.all|join:', '|lower }}
+                </p>
+                {% endif %}
+
+                {% if movie.countries.exists %}
+                <p class="text mb-2 non-active-p"><strong>Страны:</strong>
+                    {% if movie.countries.exists %}
+                        {{ movie.countries.all|join:', ' }}
+                    {% else %}
+                        Нет информации
+                    {% endif %}
+                </p>
+                {% endif %}
+
+                {% if movie.movie_duration %}
+                    <p class="mb-2 non-active-p"><strong>Длительность:</strong> {{ movie.movie_duration }} мин</p>
+                {% endif %}
+                {% if movie.movie_cast %}
+                    <p class="mb-2 non-active-p"><strong>В главных ролях:</strong> {{ movie.movie_cast|join:', ' }}</p>
+                {% endif %}
+                <p class="mb-0"><strong>Зал показа:</strong> {{ movie.get_hall_display }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="buyticket-modal" hidden>
+        <div class="modal-content">
+            <div class="modal-title">
+                <h1>Выбор сеанса на фильм "{{ movie.name }}"</h1>
+                <button class="closemodal-btn">X</button>
+            </div>
+            {% for date, pairs in movie_sessions.items %}
+                <h2 class="session-date">{{ date }}</h2>
+                {% for pair in pairs %}
+                    <div class="session-block">
+                        {% if pair.1 > 0%}
+                            <p class="session-info">
+                                <span class="session-time">{{ pair.0.session_time }}</span> <span class="session-price">{{ pair.0.session_price }} </span> <span class="session-format-{{ pair.0.format_session}}">{{ pair.0.format_session }}</span> Осталось свободных мест: {{ pair.1 }}
+                            </p>
+                            <div class="btn px-4 py-2 action-btn mb-3" id="openPremierWidget" data-prisma-theatre-id="{{ prisma_theatre_id }}" data-film-id="{{ prisma_film_id }}" data-session-id="{{ pair.0.session_id }}">
+                                Купить билет
+                            </div>
+                        {% else %}
+                            <p class="session-info">
+                                <span class="session-time">{{ pair.0.session_time }}</span> <span class="session-price">{{ pair.0.session_price }}₽</span> <span class="session-format-{{ pair.0.format_session}}">{{ pair.0.format_session }}</span> Осталось свободных мест: {{ pair.1 }}
+                            </p>
+                            <div class="btn px-4 py-2 nonaction-btn mb-3">
+                                Билетов нет
+                            </div>
+                        {% endif %}
+                        
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row justify-content-center align-items-center position-relative">
+        <button id="buyticket-btn" class="btn px-4 py-2 action-btn mb-3">
+            Выбрать сеанс
+        </button>
+    </div>
+
+    <div class="row justify-content-center align-items-center position-relative">
+        <button id="fullscreen-btn" class="btn px-4 py-2 action-btn mb-3">
+            Смотреть трейлер
+        </button>
+    </div>
+
+</section>
+
+<img class="arrow mb-2" src="{% static 'vid/arrow.gif' %}">
+
+<section class="section-card mb-3" id="movieDescription">
+    <h1>Описание</h1>
+    <p>{{ movie.description }}</p>
+    {% if movie.published_year > 1%}
+    <p class="text mb-2 active-p"><strong>Год выхода:</strong> {{ movie.published_year }}</p>
+    {% endif %}
+    <p class="text mb-2 active-p"><strong>Страны:</strong>
+    {% if movie.countries.exists %}
+        {{ movie.countries.all|join:', ' }}
+    {% endif %}
+    </p>
+    {% if movie.movie_duration %}
+        <p class="mb-2 active-p"><strong>Длительность:</strong> {{ movie.movie_duration }} мин</p>
+    {% endif %}
+    {% if movie.movie_cast %}
+        <p class="mb-2 active-p"><strong>В главных ролях:</strong> {{ movie.movie_cast|join:', ' }}</p>
+    {% endif %}
+</section>
+
+{% endblock %}
+
+{% block include_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="{% static 'js/movie_detail.js' %}"></script>
+<script src="{% static 'js/header_handler.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const posters = document.querySelectorAll('.shadow-img');
+
+        posters.forEach(poster => {
+            poster.addEventListener('mouseenter', () => {
+                const badge = poster.closest('.position-relative').querySelector('.pushkin-badge');
+                if (badge) badge.classList.add('pushkin-badge-hover');
+            });
+
+            poster.addEventListener('mouseleave', () => {
+                const badge = poster.closest('.position-relative').querySelector('.pushkin-badge');
+                if (badge) badge.classList.remove('pushkin-badge-hover');
+            });
+        });
+    });
+
+    const artists = document.getElementsByClassName('all');
+    for (let i = 0; i < artists.length; i++){
+        artists[i].setAttribute("target", "_blank");
+    }
+</script>
+{% endblock %}

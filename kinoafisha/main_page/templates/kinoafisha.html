@@ -1,0 +1,150 @@
+<h1>Прокатная неделя</h1>
+
+    <div class="row g-3 mb-3 justify-content-center week">
+      {% for day in week_days %}
+        <a href="{% update_query current_filters 'selected_date' forloop.counter0 %}"
+          class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-1-7"
+          style="text-decoration: none;">
+          
+          <div class="card card-custom text-center h-100 {% if day.date_obj == selected_date.date_obj %}selected-day{% endif %}">
+            <div class="card-body p-2 d-flex flex-column justify-content-between" style="min-height: 100px;">
+              <div>
+                <h6 class="card-title mb-1">{{ day.weekday_name }}</h6>
+                <p class="card-text mb-1">{{ day.full_date }}</p>
+              </div>
+              <div>
+                {% if day.label %}
+                  <span class="badge day-span">{{ day.label }}</span>
+                {% else %}
+                  <span style="visibility: hidden;">_</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+
+
+  <div class="row">
+    <aside class="col-12 col-md-3 mb-3">
+      <form class="filter-form" id="filterForm" method="get">
+        <div class="mb-3">
+          <label class="form-label">Выберите жанры:</label>
+          <div>
+            {% for genre in genres %}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" 
+                       name="genres" value="{{ genre.id }}" id="genre_{{ genre.id }}"
+                       {% if selected_genres and genre in selected_genres %}checked{% endif %}>
+                <label class="form-check-label" for="genre_{{ genre.id }}">
+                  {{ genre.name }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Выберите страны:</label>
+          <div>
+            {% for country in countries %}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" 
+                       name="countries" value="{{ country.id }}" id="country_{{ country.id }}"
+                       {% if selected_countries and country in selected_countries %}checked{% endif %}>
+                <label class="form-check-label" for="country_{{ country.id }}">
+                  {{ country.name }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Льготы:</label>
+          <div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" 
+                name="only_pushkin_card" value="1" id="only_pushkin_card"
+                {% if only_pushkin_card == '1' %}checked{% endif %}>
+              <label class="form-check-label" for="only_pushkin_card">
+                Пушкинская карта
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <input class="btn px-4 py-2 go-to-film-btn mb-2" type="submit" value="Применить фильтры">
+
+        <a href="{% url 'kinoafisha' %}?selected_date={{ selected_date_number }}" class="btn px-4 py-2 rounded-2 shadow-btn">
+          Очистить фильтры
+        </a>
+
+        <input type="hidden" name="selected_date" value="{{ selected_date_number }}">
+      </form>
+    </aside>
+
+    <section class="col-12 col-md-9">
+      <h1 class="name-page">
+        {{ selected_date.afisha_label }}
+      </h1>
+
+      {% if movies %}
+        <div class="row g-3">
+          {% for movie in movies %}
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4 d-flex">
+              <a href="{% url 'movie_detail' movie.id %}" class="card h-100 flex-fill card-custom film-card-wrapper" style="padding-top: 16px;">
+                <div class="position-relative">
+
+                  {% if movie.is_allow_pushkin_card %}
+                    <div style="position: absolute; top: -10px; left: -10px; z-index: 10;">
+                      <img src="{% static 'img/pushkin.png' %}" alt="Можно по Пушкинской карте" style="width: 60%;">
+                    </div>
+                  {% endif %}
+
+                  {% if movie|is_last_day:selected_date %}
+                    <div style="position: absolute; top: -10px; right: -10px; z-index: 10;">
+                      <img src="{% static 'img/last-day.svg' %}" alt="Последний день проката">
+                    </div>
+                  {% endif %}
+
+                  <div class="afisha-wrapper" style="height: 100%; max-height:520px; overflow: visible; position: relative; display: flex; align-items: center; justify-content: center;">
+                    <img src="{{ movie.afisha.url }}" class="card-img-top" alt="{{ movie.name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                  </div>
+                </div>
+
+                <div class="card-body p-2 d-flex flex-column justify-content-between">
+                  <div>
+                    <h2 class="card-title mb-1" title="{{ movie.name }}">{{ movie.name }} {{ movie.get_age_constraint_display }}</h2>
+                    <p class="card-text mb-1">Год: {{ movie.published_year }}</p>
+                    <p class="card-text mb-1">Жанры: {{ movie.genres.all|join:', '|lower }}</p>
+                    <p class="card-text mb-1">
+                      Страны: {% if movie.countries.exists %}{{ movie.countries.all|join:', ' }}{% else %}Нет информации{% endif %}
+                    </p>
+                    <p class="card-text mb-2">Зал показа: {{ movie.get_hall_display }}</p>
+                  </div>
+                  {% if movie.buy_ticket_url != 'Отсутствует' %}
+                    <a href="{{ movie.buy_ticket_url }}" class="btn btn-sm btn-outline-primary w-100 mt-auto">Купить билет</a>
+                  {% endif %}
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+
+
+    {% elif selected_genres or selected_countries or only_pushkin_card %}
+      <div class="d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 300px;">
+        <h3 class="mb-3">К сожалению, фильма под ваши желания в прокате сейчас нет! Попробуйте изменить фильтры</h3>
+        <a href="{% url 'kinoafisha' %}?selected_date={{ selected_date_number }}" class="btn btn-secondary px-4 py-2 rounded-2 shadow-btn">
+          Очистить фильтры
+        </a>
+      </div>
+    {% else %}
+      <div class="d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 300px;">
+        <h3 class="mb-3">В этот день пока нет запланированных киносеансов!</h3>
+      </div>
+    {% endif %}
+    </section>
+  </div>

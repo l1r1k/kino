@@ -1,0 +1,257 @@
+.carousel-wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.slides {
+    display: flex;
+    transition: transform 0.6s ease;
+    height: 100%;
+}
+
+.slide {
+    position: relative;
+    min-width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+}
+
+/* Постер */
+.poster {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 1s ease;
+}
+
+/* Видео трейлера */
+video.trailer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+/* Overlay с текстом */
+.text-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    opacity: 0;
+    justify-items: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.5) 100%, rgba(0, 0, 0, 0.5) 100%, rgba(0, 0, 0, 0.5) 100%);
+    padding: 1.25rem;
+    border-radius: 1rem;
+}
+
+.text-overlay h1 {
+    margin: 0;
+    max-width: 30rem;
+    color: #fff;
+}
+
+.text-overlay h1 .logo{
+    width: 100%;
+}
+
+.text-overlay p {
+    font-size: 18px;
+    margin: 10px 0 0;
+    color: #fff;
+}
+
+/* Анимация появления текста */
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translate(-50%, -40%); }
+    100% { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+/* Карточка с кнопкой Подробнее */
+.redirect-card {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.redirect-card.active {
+    opacity: 1;
+}
+
+.redirect-card h1 {
+    text-align: center;
+    max-width: 20rem;
+    color: #fff;
+}
+
+.redirect-card h1 .logo{
+    width: 100%;
+}
+
+/* Кнопки управления */
+.controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.controls button {
+    font-size: 20px;
+    background: rgba(0,0,0,0.5);
+    border: none;
+    padding: 5px 10px;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* ====== Кнопки навигации слайдов (красивые стрелки) ====== */
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(0,0,0,0); /* прозрачный фон */
+    border: none;
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.prev::before, .next::before {
+    content: '';
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-top: 3px solid #aaa;
+    border-right: 3px solid #aaa;
+    transition: all 0.3s ease;
+}
+
+.prev::before {
+    transform: rotate(-135deg);
+}
+
+.next::before {
+    transform: rotate(45deg);
+}
+
+.prev:hover::before, .next:hover::before {
+    border-color: #fff;
+    transform: scale(1.2) rotate(var(--rotation)); /* scale и цвет при hover */
+}
+
+.prev {
+    left: 20px;
+    --rotation: -135deg;
+}
+
+.next {
+    right: 20px;
+    --rotation: 45deg;
+}
+
+.prev:hover, .next:hover {
+    background: rgba(0,0,0,0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    border-radius: 50%;
+}
+
+/* Кнопки навигации дней недели */
+
+/* Кнопки навигации внутри week-wrapper */
+.week-wrapper .prev,
+.week-wrapper .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(0,0,0,0);
+    border: none;
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+/* Позиционирование слева и справа */
+.week-wrapper .prev { left: 0; --rotation: -135deg; }
+.week-wrapper .next { right: 0; --rotation: 45deg; }
+
+/* Стрелки внутри кнопок */
+.week-wrapper .prev::before,
+.week-wrapper .next::before {
+    content: '';
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-top: 3px solid #aaa;
+    border-right: 3px solid #aaa;
+}
+
+.week-wrapper .prev::before { transform: rotate(-135deg); }
+.week-wrapper .next::before { transform: rotate(45deg); }
+
+/* Hover эффекты */
+.week-wrapper .prev:hover,
+.week-wrapper .next:hover {
+    background: rgba(0,0,0,0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    border-radius: 50%;
+}
+
+.week-wrapper .prev:hover::before,
+.week-wrapper .next:hover::before {
+    border-color: #fff;
+    transform: scale(1.2) rotate(var(--rotation));
+}
+
+/* Индикаторы */
+.indicators {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.indicators div {
+    width: 12px;
+    height: 12px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.indicators div.active {
+    background: #006664;
+}

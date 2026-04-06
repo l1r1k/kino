@@ -1,0 +1,186 @@
+{% load static %}
+{% load query_tags %}
+{% load filters %}
+
+<h1>Прокатная неделя</h1>
+
+    <div class="week-wrapper position-relative" id="weekBlock">
+      <button class="prev d-none" id="weekPrev"></button>
+      <button class="next d-none" id="weekNext"></button>
+
+      <div class="week-viewport" id="weekViewport">
+        <div class="week d-flex" id="weekContainer">
+          {% for day in week_days %}
+            <a href="{% update_query current_filters 'selected_date' forloop.counter0 %}"
+              class="day-item flex-shrink-0"
+              style="text-decoration:none;">
+              <div class="card card-custom text-center h-100 {% if day.date_obj == selected_date.date_obj %}selected-day{% endif %}">
+                <div class="card-body p-2 d-flex flex-column justify-content-between" style="min-height:100px;">
+                  <div>
+                    <h6 class="card-title mb-1">{{ day.weekday_name }}</h6>
+                    <p class="card-text mb-1">{{ day.full_date }}</p>
+                  </div>
+                  <div>
+                    {% if day.label %}
+                      <span class="badge day-span">{{ day.label }}</span>
+                    {% else %}
+                      <span style="visibility:hidden;">_</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  <div class="row">
+    <div class="d-md-none mb-3">
+      <button id="filterToggleBtn" class="btn w-100 filter-btn">
+        Фильтры
+      </button>
+    </div>
+
+    <aside class="col-12 col-md-3 mb-3 filter-aside" id="filterAside">
+      
+      <div class="filter-header d-md-none">
+        <button id="filterCloseBtn" class="close-btn">&times;</button>
+        <h2>Фильтры</h2>
+      </div>
+      
+      <form class="filter-form" id="filterForm" method="get" action="?#kinoafishaSection">
+        <div class="mb-3">
+          <label class="form-label">Выберите жанры:</label>
+          <div>
+            {% for genre in genres %}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" 
+                       name="genres" value="{{ genre.id }}" id="genre_{{ genre.id }}"
+                       {% if selected_genres and genre in selected_genres %}checked{% endif %}>
+                <label class="form-check-label" for="genre_{{ genre.id }}">
+                  {{ genre.name }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Выберите страны:</label>
+          <div>
+            {% for country in countries %}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" 
+                       name="countries" value="{{ country.id }}" id="country_{{ country.id }}"
+                       {% if selected_countries and country in selected_countries %}checked{% endif %}>
+                <label class="form-check-label" for="country_{{ country.id }}">
+                  {{ country.name }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Льготы:</label>
+          <div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" 
+                name="only_pushkin_card" value="1" id="only_pushkin_card"
+                {% if only_pushkin_card == '1' %}checked{% endif %}>
+              <label class="form-check-label" for="only_pushkin_card">
+                Пушкинская карта
+              </label>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="filters-buttons">
+          <input class="btn px-4 py-2 action-btn mb-2" type="submit" value="Применить фильтры">
+
+          <a href="{% url 'index' %}?selected_date={{ selected_date_number }}#kinoafishaSection" class="btn px-4 py-2 rounded-2 shadow-btn">
+            Очистить фильтры
+          </a>
+        </div>
+
+        <input type="hidden" name="selected_date" value="{{ selected_date_number }}">
+      </form>
+    </aside>
+
+    <section class="col-12 col-md-9">
+      <h1 class="name-page">
+        {{ selected_date.afisha_label }}
+      </h1>
+
+      {% if movies %}
+        <div class="row g-3">
+          {% for session in sessions %}
+            {% if session.movie in movies %}
+              <div class="col-6 col-sm-6 col-md-6 col-lg-4 d-flex">
+                <a href="{% url 'movie_detail' session.movie.id %}" class="card h-100 flex-fill card-custom film-card-wrapper" style="padding-top: 16px;">
+                  <div class="position-relative">
+
+                    {% if session.movie.is_allow_pushkin_card %}
+                      <div style="position: absolute; top: -10px; left: -10px; z-index: 10;">
+                        <img src="{% static 'img/pushkin.png' %}" alt="Можно по Пушкинской карте" style="width: 60%;">
+                      </div>
+                    {% endif %}
+
+                    <div class="afisha-wrapper" style="height: 100%; max-height:520px; overflow: visible; position: relative; display: flex; align-items: center; justify-content: center;">
+                      <img src="{{ session.movie.afisha.url }}" class="card-img-top" alt="{{ session.movie.name }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                    </div>
+                  </div>
+
+                  <div class="card-body p-2 d-flex flex-column justify-content-between">
+                    <div class="movie-info-block">
+                      <h2 class="card-title mb-1" title="{{ session.movie.name }}">{{ session.movie.name }} {{ session.movie.get_age_constraint_display }}</h2>
+                      {% if session.movie.published_year > 1 %}
+                      <p class="card-text mb-1">Год: {{ session.movie.published_year }}</p>
+                      {% endif%}
+                      <p class="card-text mb-1">Жанры: {{ session.movie.genres.all|join:', '|lower }}</p>
+                      <p class="card-text mb-1">
+                        Страны: {% if session.movie.countries.exists %}{{ session.movie.countries.all|join:', ' }}{% else %}Нет информации{% endif %}
+                      </p>
+                      <p class="card-text mb-1">Зал показа: {{ session.movie.get_hall_display }}</p>
+                      <p class="card-text mb-3">Формат показа: {{ session.format_session }}</p>
+                      <p class="card-text mb-2">Время показа: <span class="session-time">{{session.session_time}}</span></p>
+                      {% if free_places|get_item:session.session_id > 0%}
+                        <p class="card-text mb-2">Свободных мест: <span class="session-free-place">{{free_places|get_item:session.session_id}}</span></p>
+                      {% else %}
+                        <p class="card-text mb-2">Свободных мест: <span class="session-free-place">0</span></p>
+                      {% endif %}
+                      <p class="card-text mb-2">Стоимость билета: <span class="session-price">{{ session.session_price }}₽</span></p>
+                    </div>
+                  </div>
+                  {% if free_places|get_item:session.session_id > 0 %}
+                    <div class="btn px-4 py-2 action-btn mb-3" id="openPremierWidget" data-prisma-theatre-id="{{ prisma_theatre_id }}" data-film-id="{{ prisma_film_id }}" data-session-id="{{ session.session_id }}" style="z-index: 1;">
+                      Купить билет
+                    </div>
+                  {% else %}
+                    <div class="btn px-4 py-2 nonaction-btn mb-3" style="z-index: 1;">
+                      Билетов нет
+                    </div>
+                  {% endif %}
+                </a>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+
+    {% elif selected_genres or selected_countries or only_pushkin_card %}
+      <div class="d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 300px;">
+        <h3 class="mb-3">К сожалению, фильма под ваши желания в прокате сейчас нет! Попробуйте изменить фильтры</h3>
+        <a href="{% url 'index' %}?selected_date={{ selected_date_number }}#kinoafishaSection" class="btn btn-secondary px-4 py-2 rounded-2 shadow-btn">
+          Очистить фильтры
+        </a>
+      </div>
+    {% else %}
+      <div class="d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 300px;">
+        <h3 class="mb-3">В этот день пока нет запланированных киносеансов!</h3>
+      </div>
+    {% endif %}
+    </section>
+  </div>
