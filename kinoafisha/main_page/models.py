@@ -77,7 +77,7 @@ class Movie(models.Model):
     rental_start = models.DateField(verbose_name='Дата начала проката', null=True, blank=True)
     rental_end = models.DateField(verbose_name='Дата окончания проката', null=True, blank=True)
     # Данные получаемые с API Премьер Зала
-    movie_id_premier = models.PositiveIntegerField(verbose_name='Код фильма из премьер зала', unique=True, help_text='Уникальный код фильма из Базы Данных Премьер Зала. 0 - если фильм не из Базы Данных Премьер Зала', blank=True, null=True, default=0)
+    movie_id_premier = models.PositiveIntegerField(verbose_name='Код фильма из премьер зала', unique=True, help_text='Уникальный код фильма из Базы Данных Премьер Зала. Оставить пустым, если фильм не из Базы Данных Премьер Зала', blank=True, null=True)
     movie_directors = models.JSONField(
         verbose_name='Режиссеры фильма', 
         help_text='Укажите всех режиссеров фильма', 
@@ -117,7 +117,7 @@ class Sessions(models.Model):
     def __str__(self):
         return f'{self.movie.name} - {self.session_date} {self.session_time}'
 
-    session_id = models.PositiveIntegerField(verbose_name='Код сеанса фильма', help_text='Укажите код сеанса фильма из Базы Данных Премьер Зала')
+    session_id = models.PositiveIntegerField(verbose_name='Код сеанса фильма', help_text='Укажите код сеанса фильма из Базы Данных Премьер Зала. Если сеанс добавлен не из Базы Данных Премьер Зала - оставить 0', blank=True, default=0)
     session_date = models.DateField(verbose_name='Дата сеанса', help_text='Укажите дату сеанса')
     session_time = models.TimeField(verbose_name='Время сеанса', help_text='Укажите время сеанса')
     session_price = models.PositiveSmallIntegerField(verbose_name='Стоимость билета', help_text='Укажите стоимость билета')

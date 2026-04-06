@@ -1,7 +1,6 @@
 import json
 import requests
 import os
-import logging
 from dotenv import load_dotenv
 from pathlib import Path
 from datetime import datetime
@@ -12,10 +11,6 @@ from django.utils import timezone
 
 from io import BytesIO
 from PIL import Image
-
-# Логгер
-
-loger = logging.getLogger(__name__)
 
 # Путь до корневой папки django
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -158,10 +153,10 @@ def create_movie_from_premier_zal_json_to_orm_model(
 
         if relative_path:
             afisha_or_trailer = 'Афиша' if '.jpeg' in str(relative_path) else 'Трейлер'
-            logger.info(f'{afisha_or_trailer} фильма {name} успешно загружен!')
+            print(f'{afisha_or_trailer} фильма {name} успешно загружен!')
             relative_paths.append(relative_path)
 
-    logger.info(f'Добавление записи фильма {name}')
+    print(f'Добавление записи фильма {name}')
 
     movie = Movie.objects.create(
         name=name, description=story, short_description=story[:story.find('.')] if story else None,
@@ -171,7 +166,7 @@ def create_movie_from_premier_zal_json_to_orm_model(
         pushkin_id=pushkin_id, movie_directors=directors
         )
 
-    logger.info(f'Запись фильма {name} успешно добавлена в локальную БД с первичным ключом {movie.pk}')
+    print(f'Запись фильма {name} успешно добавлена в локальную БД с первичным ключом {movie.pk}')
 
     for genre in genres:
         genre = genre.capitalize()
@@ -182,7 +177,7 @@ def create_movie_from_premier_zal_json_to_orm_model(
 
         movie.genres.add(genre_from_db[0])
 
-        logger.info(f'Жанр {genre_from_db[0].name} добавлен к фильму {name}!')
+        print(f'Жанр {genre_from_db[0].name} добавлен к фильму {name}!')
 
     for country in countries:
         country = country.capitalize()
@@ -193,13 +188,13 @@ def create_movie_from_premier_zal_json_to_orm_model(
 
         movie.countries.add(country_from_db[0])
 
-        logger.info(f'Страна {country_from_db[0].name} добавлена к фильму {name}!')
+        print(f'Страна {country_from_db[0].name} добавлена к фильму {name}!')
 
     for relative_path in relative_paths:
         relative_path_str = str(relative_path)
         if '.jpeg' in relative_path_str:
             movie.afisha.name = relative_path_str
-            logger.info(f'Путь {relative_path} добавлен к фильму {name}!')
+            print(f'Путь {relative_path} добавлен к фильму {name}!')
 
     movie.save()
 
